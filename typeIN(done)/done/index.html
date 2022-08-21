@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+    
+    </style>
+</head>
+<body>
+   <!---- <div class="header">
+        <ul>
+        <li>Home</li>
+        <li>About</li>
+        <li>Login</li>
+        <li>Leaderboard</li>
+         </ul>
+    </div>
+-->
+<div>
+    <input type="checkbox" class="checkbox" id="chk" />
+    <label class="label" for="chk">
+        <i class="fas fa-moon"></i>
+        <i class="fas fa-sun"></i>
+        <div class="ball"></div>
+    </label>
+</div>
+
+    <div class="mainDiv">
+        <div class="centerDiv">
+            <h3 class = 'timer' id = 'timer'>10</h3>
+            <h1> typing test</h1>
+            <h2 id="msg" class="displ"></h2> 
+            <!-- <div id="mainArea"> -->
+                <textarea id="words"  cols="100" rows="10" class="input"></textarea>
+                <!-- <span id="dup">hII</span> -->
+            <!-- </div> -->
+            <!-- <p></p> -->
+            <br>
+            <button id="btn" class="mainbtn">Start</button>
+        </div>
+    </div>
+
+<script>
+
+    const setOfWords =[" Yesterday  after five subjects at school I felt so tired and hungry so I wanted to go home quickly because I was in hurried I rode my bike so fast. Suddenly a traffic accident happened it made all people and me frightened Fortunately It didn't happened to me and I felt so lucky I think that it is the most frightening experience in my life.",
+    "I am a gourmet so I am very picky when choosing where to eat So I am very happy to choose a restaurant near the school that suits my taste that is Fun Fried Chicken  It is located on a small street very close to a large park It was a pretty neat and tidy place From the outside the restaurant does not look very impressive There are large glass windows in the front and some benches outside for everyone to sit while waiting. Inside it was a lot of square green wooden tables each with about four white chairs around. ",
+    "The restaurant has two floors I prefer the second floor because ther sometimes I can get a window seat and enjoy watching people pass by the street outside The restaurant serves mainly breakfast and lunch It serves a variety of Vietnamese dishes and also fast food The restaurant also has a wide selection of delicious homemade cakes and they make delicious coffee However of all the dishes at this restaurant I like the fried chicken the most."];
+    const msg = document.getElementById('msg');
+    const typedWords = document.getElementById('words');
+
+
+    
+
+     const textArea = document.getElementById('words');
+    let randomNumber = Math.floor(Math.random()*setOfWords.length);
+    msg.innerText = setOfWords[randomNumber];
+    typedWords.placeholder = msg.innerText;
+    let startTime, endTime,count = 10,timeInterval
+    const gameObj = {isStarted:false};
+    const playGame = () =>{
+       //    console.log('PG')
+        let date = new Date();
+        startTime = getInSecond(date.getTime())
+        console.log('st',startTime)
+        btn.innerText = "Done";
+        // setTimeout(()=>alert('time up'),5000);
+        // changeTime()
+        timeInterval = setInterval(changeTime,1000)
+        
+    //    document.getElementById('msg').style.color = "white";
+    }
+    // setTimeout(()=>()=>{
+    //         document.getElementsByClassName('timer').innerText = ++count;
+    // },1000)
+    const changeTime = () =>{
+        console.log('setiing')
+        document.getElementById('timer').innerHTML = --count;
+        // setInterval(changeTime,1000)
+        if(count === 0) {
+            console.log('---',timeInterval)
+            gameObj.isStarted = false;
+            clearInterval(timeInterval);
+            count = 10;
+            document.getElementById('timer').innerHTML = 10;
+            textArea.value = '';
+            console.log('Tec',textArea.innerHTML,',',textArea.innerText,',',textArea,',',textArea.value)
+            // textArea.style.display = 'none';
+            endPlay();
+        }
+    }
+       const endPlay = () =>{
+        let date = new Date();
+        endTime = date.getTime();
+        let totalTime = ((endTime - startTime)/ 1000);
+        console.log(totalTime); 
+
+        let totalStr = typedWords.value;
+        let wordCount = wordCounter(totalStr);
+
+        let speed = Math.round((wordCount / totalTime)*60)
+
+
+        let finalmsg =  speed+ "wpm  ";
+
+        finalmsg += comparewords(msg.innerText,totalStr);
+
+        msg.innerText = finalmsg;
+    }
+
+    const comparewords = (str1, str2) =>{
+        let words1 = str1.split(" ");
+        let words2 = str2.split(" ");
+        let cnt =0;
+
+        words1.forEach(function (item, index){
+            if (item == words2[index]){
+                cnt++
+            }
+        })
+        let errorwords = (words1.length - cnt);
+        return (cnt + " " + "correct out of" +" "+ words1.length + "words and the total number of errors are"+" " + errorwords + "."
+        )
+
+    }
+    const getInSecond = (time) => Math.floor(time/1000);
+    const wordCounter = (str) =>{
+        let response = str.split(" ").length
+        console.log(response);
+        return response
+    }
+    typedWords.addEventListener('keydown',(e)=>{
+        btn.style.display = 'none';
+
+        console.log('PG',gameObj.isStarted,count)
+        if(typedWords.value=='' && !(e.key === 'Alt' ||  e.key === 'Control' || e.key === 'Tab') && !gameObj.isStarted) {
+            gameObj.isStarted = true;
+            console.log('started');
+            typedWords.disabled=false;
+            playGame();
+        }
+    })
+    btn.addEventListener('click', function(e){
+        console.log('e',e,this.innerText)
+        if(this.innerText == 'Start'){
+            typedWords.focus();
+            btn.style.display = 'none';
+            typedWords.disabled=false;
+            
+            playGame();
+         } else if(this.innerText == "Done"){
+                typedWords.disabled = true;
+                btn.innerText = "Start";
+                endPlay();
+            }
+        }
+    )
+    typedWords.focus();
+    btn.style.display = 'none';
+     typedWords.disabled=false;
+
+   // playGame();
+    
+
+</script>
+
+</body>
+</html>
